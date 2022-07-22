@@ -4,6 +4,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import stage.agencedirectserver.entities.Agent;
 import stage.agencedirectserver.entities.Role;
 import stage.agencedirectserver.services.AgentService;
@@ -19,6 +21,11 @@ public class AgencedirectServerApplication {
 	}
 
 	@Bean
+	PasswordEncoder passwordEncoder(){
+		return new BCryptPasswordEncoder();
+	}
+
+	@Bean
 	CommandLineRunner run(AgentService agentService, RoleService roleService){
 		return args -> {
 			try {
@@ -28,7 +35,8 @@ public class AgencedirectServerApplication {
 
 				agentService.addAgent(new Agent(null,"fartas","anas","fartasanas","1234",new ArrayList<>()));
 
-				agentService.addRoleToAgent("fartasanas","ROLE_DIRECTOR");
+
+				agentService.addRoleToAgent("fartasanas","ROLE_ADMIN");
 			}
 			catch (Exception e){
 				System.out.println("Duplicated Default Values");

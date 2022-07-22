@@ -30,7 +30,7 @@ public class AgentController {
     }
 
     // post Methods
-    @PostMapping("/add")
+    @PostMapping("/register")
     public ResponseEntity<Agent> addAgent(@RequestBody Agent agent){
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/agent/add").toUriString());
         return ResponseEntity.created(uri).body(agentService.addAgent(agent));

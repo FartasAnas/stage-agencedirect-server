@@ -12,7 +12,7 @@ import java.util.Collection;
 @Entity @Data @Table(name = "agent")
 @NoArgsConstructor @AllArgsConstructor
 public class Agent {
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false) @Size(max = 20)
