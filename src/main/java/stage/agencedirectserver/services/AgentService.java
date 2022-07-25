@@ -59,13 +59,13 @@ public class AgentService implements UserDetailsService {
 
     }
     public Agent getAgentByUsername(String username) {
-        log.info("Fetching agent ",username);
+        log.info("Fetching agent {}",username);
         return agentRepository.findByUsername(username);
     }
 
     // post Methods
     public Agent addAgent(Agent agent) {
-        log.info("Saving new user ",agent.getUsername() ," to database");
+        log.info("Saving new user {}",agent.getUsername() ," to database");
         agent.setPassword(passwordEncoder.encode(agent.getPassword()));
         return agentRepository.save(agent);
     }
@@ -73,7 +73,7 @@ public class AgentService implements UserDetailsService {
     // put Methods
     public Agent updateAgent(Long id, Agent agent) {
         Agent agentToUpdate = agentRepository.findById(id).orElseThrow(null);
-        log.info("updating agent ",agentToUpdate.getUsername());
+        log.info("updating agent {}",agentToUpdate.getUsername());
 
         agentToUpdate.setPrenom( agent.getPrenom()!=null ? agent.getPrenom() : agentToUpdate.getPrenom() );
         agentToUpdate.setNom( agent.getNom()!=null ? agent.getNom() : agentToUpdate.getNom());
@@ -99,7 +99,7 @@ public class AgentService implements UserDetailsService {
             log.info("Agent already has this role");
             throw new RuntimeException("Agent already has this role");
         }
-        log.info("adding role ", role.getName() ," to user ",agent.getUsername());
+        log.info("adding role {}", role.getName() ," to user {}",agent.getUsername());
         agent.getRoles().add(role);
     }
 

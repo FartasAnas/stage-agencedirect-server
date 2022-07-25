@@ -1,5 +1,6 @@
 package stage.agencedirectserver.entities;
 
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,10 +23,15 @@ public class Agent {
     private String nom;
 
     @Column(nullable = false,unique = true) @Size(max = 20)
-    private String username;
+        private String username;
 
     @Column(nullable = false)
     private String password;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "agence_id")
+    @JsonIncludeProperties(value = {"id","nom","ville","adresse"})
+    private Agence agence;
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Role> roles=new ArrayList<>();

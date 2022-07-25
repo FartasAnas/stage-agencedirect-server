@@ -4,16 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import stage.agencedirectserver.entities.Agent;
 import stage.agencedirectserver.entities.Role;
 import stage.agencedirectserver.services.RoleService;
 
 import java.net.URI;
 import java.util.List;
 
-@RestController
-@RequiredArgsConstructor
-@RequestMapping("/api/role")
+@RestController @RequiredArgsConstructor @RequestMapping("/api/role")
 public class RoleController {
     public final RoleService roleService;
 

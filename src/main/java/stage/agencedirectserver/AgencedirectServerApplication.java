@@ -33,7 +33,7 @@ public class AgencedirectServerApplication {
 				roleService.addRole(new Role(null,"ROLE_AGENT"));
 				roleService.addRole(new Role(null,"ROLE_ADMIN"));
 
-				agentService.addAgent(new Agent(null,"fartas","anas","fartasanas","1234",new ArrayList<>()));
+				agentService.addAgent(new Agent(null,"fartas","anas","fartasanas","1234",null,new ArrayList<>()));
 
 
 				agentService.addRoleToAgent("fartasanas","ROLE_ADMIN");

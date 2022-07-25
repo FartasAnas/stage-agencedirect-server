@@ -5,13 +5,16 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import stage.agencedirectserver.entities.Agence;
 import stage.agencedirectserver.entities.Agent;
 import stage.agencedirectserver.entities.Role;
+import stage.agencedirectserver.services.AgenceService;
 import stage.agencedirectserver.services.AgentService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +24,7 @@ import java.net.URI;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.util.Arrays.stream;
+
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -30,6 +33,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RestController @RequiredArgsConstructor @RequestMapping("/api/agent")
 public class AgentController {
     private final AgentService agentService;
+    private final AgenceService agenceService;
 
     // get Methods
     @GetMapping("/all")
@@ -47,8 +51,23 @@ public class AgentController {
 
     // post Methods
     @PostMapping("/register")
-    public ResponseEntity<Agent> addAgent(@RequestBody Agent agent){
+    public ResponseEntity<Agent> addAgent(@RequestBody Agent agent) throws Exception {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/agent/add").toUriString());
+        log.info("addAgent: {}", agent);
+        Agence agence=null;
+        try {
+            if (agent.getAgence().getId() != null) {
+                log.info("addAgent: agenceId: {}", agent.getAgence().getId());
+                agence = agenceService.getAgenceById(agent.getAgence().getId());
+            } else if (agent.getAgence().getNom() != null) {
+                agence = agenceService.getAgenceByNom(agent.getAgence().getNom());
+            } else {
+                throw new Exception("Agence not found");
+            }
+        }catch (NullPointerException e){
+            log.info("Agence is null");
+        }
+        agent.setAgence(agence);
         return ResponseEntity.created(uri).body(agentService.addAgent(agent));
     }
 
@@ -65,9 +84,16 @@ public class AgentController {
     }
 
     // other Methods
-    @PostMapping("/addRole/{username}/{role}")
-    public void addRoleToUser(@PathVariable("username") String username, @PathVariable("role") String roleName){
-        agentService.addRoleToAgent(username, roleName);
+    @PostMapping("/addRole")
+    public void addRoleToUser(@RequestBody AddRoleForm form){
+        log.info("addRoleToUser: {}", form);
+        agentService.addRoleToAgent(form.getUsername(), form.getRoleName());
+    }
+
+    @Data
+    public static class AddRoleForm {
+        private String username;
+        private String roleName;
     }
 
     @PostMapping("/token/refresh")
@@ -109,7 +135,5 @@ public class AgentController {
             throw new RuntimeException("Refresh token is missing");
         }
     }
-
-
 
 }
