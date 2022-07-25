@@ -91,7 +91,14 @@ public class AgentService implements UserDetailsService {
     public void addRoleToAgent(String username, String roleName) {
         Agent agent = agentRepository.findByUsername(username);
         Role role = roleRepository.findByName(roleName);
-
+        if(agent == null || role == null) {
+            log.info("Agent or role not found");
+            throw new RuntimeException("Agent or role not found");
+        }
+        else if(agent.getRoles().contains(role)) {
+            log.info("Agent already has this role");
+            throw new RuntimeException("Agent already has this role");
+        }
         log.info("adding role ", role.getName() ," to user ",agent.getUsername());
         agent.getRoles().add(role);
     }

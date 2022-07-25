@@ -1,7 +1,10 @@
 package stage.agencedirectserver.controllers;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -10,7 +13,7 @@ import stage.agencedirectserver.services.AgentService;
 
 import java.net.URI;
 import java.util.List;
-
+@Slf4j
 @RestController @RequiredArgsConstructor @RequestMapping("/api/agent")
 public class AgentController {
     private final AgentService agentService;
@@ -38,9 +41,8 @@ public class AgentController {
 
     // put Methods
     @PutMapping("/update/{id}")
-    public ResponseEntity<Agent> updateAgent(@PathVariable("id") Long id, @RequestBody Agent agent){
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/update/{id}").toUriString());
-        return ResponseEntity.created(uri).body(agentService.updateAgent(id, agent));
+    public Agent updateAgent(@PathVariable("id") Long id, @RequestBody Agent agent){
+        return agentService.updateAgent(id, agent);
     }
 
     // delete Methods
@@ -50,15 +52,9 @@ public class AgentController {
     }
 
     // other Methods
-    @PostMapping("/addRole")
-    public ResponseEntity<?>addRoleToUser(@RequestBody RoleToUserForm form){
-        agentService.addRoleToAgent(form.getUsername(), form.getRoleName());
-        return ResponseEntity.ok().build();
-    }
-    @Data
-    class RoleToUserForm{
-        private String username;
-        private String roleName;
+    @PostMapping("/addRole/{username}/{role}")
+    public void addRoleToUser(@PathVariable("username") String username, @PathVariable("role") String roleName){
+        agentService.addRoleToAgent(username, roleName);
     }
 
 
