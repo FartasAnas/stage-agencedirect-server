@@ -37,7 +37,7 @@ public class AgenceService {
 
     // add Methods
     public Agence addAgence(Agence agence) {
-        log.info("Adding agence", agence);
+        log.info("Adding agence {}", agence);
         return agenceRepository.save(agence);
     }
 
@@ -64,7 +64,7 @@ public class AgenceService {
         Agent agent = agentRepository.findByUsername(username);
         Agence agence = agenceRepository.findByNom(agenceName);
         if(agent == null || agence == null) {
-            log.info("Agent or role not found");
+            log.info("Agent or Agence not found");
             throw new RuntimeException("Agent or Agence not found");
         }
         else if(agence.getAgents().contains(agent)) {

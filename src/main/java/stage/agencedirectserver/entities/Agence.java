@@ -23,7 +23,7 @@ public class Agence {
     @Column(nullable = false) @Size(max = 20)
     private String ville;
 
-    @Column(nullable = false) @Size(max = 20)
+    @Column(nullable = false) @Size(max = 50)
     private String  adresse;
 
     @Column(nullable = false)
@@ -35,4 +35,5 @@ public class Agence {
     @OneToMany(mappedBy = "agence",fetch = FetchType.LAZY,cascade=CascadeType.ALL)
     @JsonIncludeProperties(value = {"id","prenom","nom","username"})
     private Collection<Agent> agents=new ArrayList<>();
+
 }
