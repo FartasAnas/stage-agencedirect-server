@@ -45,10 +45,19 @@ public class ClientController {
     public void addClientToAgence(@RequestBody AddClientToAgenceForm form){
         clientService.addClientToAgence(form.getClientEmail(), form.getAgenceName());
     }
+    @PostMapping("/myPack")
+    public void addClientToPack(@RequestBody AddClientToPackForm form){
+        clientService.addClientToPack(form.getClientEmail(), form.getPackName());
+    }
     @Data
     public static class AddClientToAgenceForm {
         private String clientEmail;
         private String agenceName;
+    }
+    @Data
+    public static class AddClientToPackForm {
+        private String clientEmail;
+            private String packName;
     }
 
 

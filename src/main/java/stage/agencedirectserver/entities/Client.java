@@ -72,4 +72,9 @@ public class Client {
     @JoinColumn(name = "agence_id")
     @JsonIncludeProperties(value = {"id","nom","ville","adresse"})
     private Agence agence;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pack_id")
+    @JsonIncludeProperties(value = {"id","nom","tarification"})
+    private Pack pack;
 }

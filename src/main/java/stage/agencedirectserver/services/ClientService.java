@@ -6,8 +6,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import stage.agencedirectserver.entities.Agence;
 import stage.agencedirectserver.entities.Client;
+import stage.agencedirectserver.entities.Pack;
 import stage.agencedirectserver.repositories.AgenceRepository;
 import stage.agencedirectserver.repositories.ClientRepository;
+import stage.agencedirectserver.repositories.PackRepository;
 import stage.agencedirectserver.utils.CodeAccessGenerator;
 import stage.agencedirectserver.utils.sendmail.EmailService;
 
@@ -23,6 +25,8 @@ public class ClientService {
     private final PasswordEncoder passwordEncoder;
 
     private final EmailService emailService;
+
+    private final PackRepository packRepository;
 
     // get Methods
     public List<Client> getAllClients() {
@@ -49,8 +53,6 @@ public class ClientService {
         date.setYear(date.getYear() + 4);
         client.setDateExpiration(date);
 
-
-
         //Affect agence if not null
         Agence agence=null;
         try {
@@ -65,6 +67,21 @@ public class ClientService {
             log.error("Agence is null");
         }
         client.setAgence(agence);
+
+        //Affect pack if not null
+        Pack pack=null;
+        try {
+            if (client.getAgence().getId() != null) {
+                pack = packRepository.findById( client.getAgence().getId()).orElseThrow(null);
+            } else if (client.getAgence().getNom() != null) {
+                pack = packRepository.findByNom(client.getAgence().getNom());
+            } else {
+                throw new Exception("pack not found");
+            }
+        }catch (Exception e){
+            log.error("pack is null");
+        }
+        client.setPack(pack);
 
         //Send Mail to Client  off for the moment
         //String Status=emailService.sendSimpleMail(new EmailDetails(client.getEmail(),client.getCodeAccess()));
@@ -111,13 +128,21 @@ public class ClientService {
             log.info("Client or Agence not found");
             throw new RuntimeException("Client or Agence not found");
         }
-        else if(agence.getAgents().contains(client)) {
-            log.info("Agence already has this Client");
-            throw new RuntimeException("Agence already has this Client");
-        }
 
         log.info("adding Client {}", client.getEmail() ," to Agence {}",agence.getNom());
         client.setAgence(agence);
+    }
+
+    public void addClientToPack(String email,String packName){
+        Client client = clientRepository.findByEmail(email);
+        Pack pack = packRepository.findByNom(packName);
+        if(client == null || packName == null) {
+            log.info("Client or Pack not found");
+            throw new RuntimeException("Client or Pack not found");
+        }
+
+        log.info("adding Client {}", client.getEmail() ," to Pack {}",pack.getNom());
+        client.setPack(pack);
     }
 
 }
