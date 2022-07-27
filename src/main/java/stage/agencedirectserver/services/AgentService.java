@@ -9,12 +9,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import stage.agencedirectserver.entities.Agence;
 import stage.agencedirectserver.entities.Agent;
 import stage.agencedirectserver.entities.Role;
 import stage.agencedirectserver.repositories.AgenceRepository;
 import stage.agencedirectserver.repositories.AgentRepository;
 import stage.agencedirectserver.repositories.RoleRepository;
+import stage.agencedirectserver.utils.affectation.AgentToAgence;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -71,20 +71,7 @@ public class AgentService implements UserDetailsService {
         log.info("Saving new user {}",agent.getUsername() ," to database");
         agent.setPassword(passwordEncoder.encode(agent.getPassword()));
 
-        Agence agence=null;
-        try {
-            if (agent.getAgence().getId() != null) {
-                agence = agenceRepository.findById( agent.getAgence().getId()).orElseThrow(null);
-            } else if (agent.getAgence().getNom() != null) {
-                agence = agenceRepository.findByNom(agent.getAgence().getNom());
-            } else {
-                throw new Exception("Agence not found");
-            }
-        }catch (Exception e){
-            log.error("Agence is null");
-        }
-
-        agent.setAgence(agence);
+        agent.setAgence(AgentToAgence.affectAgence(agent,agenceRepository));
         return agentRepository.save(agent);
     }
 

@@ -6,8 +6,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import stage.agencedirectserver.entities.Agence;
 import stage.agencedirectserver.entities.Agent;
 import stage.agencedirectserver.entities.Role;
+import stage.agencedirectserver.services.AgenceService;
 import stage.agencedirectserver.services.AgentService;
 import stage.agencedirectserver.services.RoleService;
 
@@ -26,12 +28,14 @@ public class AgencedirectServerApplication {
 	}
 
 	@Bean
-	CommandLineRunner run(AgentService agentService, RoleService roleService){
+	CommandLineRunner run(AgentService agentService, RoleService roleService, AgenceService agenceService){
 		return args -> {
 			try {
 				roleService.addRole(new Role(null,"ROLE_DIRECTOR"));
 				roleService.addRole(new Role(null,"ROLE_AGENT"));
 				roleService.addRole(new Role(null,"ROLE_ADMIN"));
+
+				agenceService.addAgence(new Agence(null,"Agence baraka","Casa","Galina Rue 22 N 208","4.51184189","5.949496",new ArrayList<>()));
 
 				agentService.addAgent(new Agent(null,"fartas","anas","fartasanas","1234",null,new ArrayList<>()));
 

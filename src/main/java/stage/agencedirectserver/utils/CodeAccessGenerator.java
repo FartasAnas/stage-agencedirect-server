@@ -16,4 +16,7 @@ public class CodeAccessGenerator {
     public CodeAccessGenerator() {
         this.codeAccess = RandomStringUtils.random(10, upper + lower + digits + symbols);
     }
+    public static String generate() {
+        return new CodeAccessGenerator().getCodeAccess();
+    }
 }

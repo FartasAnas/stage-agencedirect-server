@@ -11,11 +11,13 @@ import stage.agencedirectserver.repositories.AgenceRepository;
 import stage.agencedirectserver.repositories.ClientRepository;
 import stage.agencedirectserver.repositories.PackRepository;
 import stage.agencedirectserver.utils.CodeAccessGenerator;
+import stage.agencedirectserver.utils.ExpireDateUtil;
+import stage.agencedirectserver.utils.affectation.ClientToAgenceUtil;
+import stage.agencedirectserver.utils.affectation.ClientToPackUtil;
 import stage.agencedirectserver.utils.sendmail.EmailService;
 
 import javax.mail.MessagingException;
 import javax.transaction.Transactional;
-import java.util.Date;
 import java.util.List;
 
 @Service @Transactional @RequiredArgsConstructor @Slf4j
@@ -45,43 +47,16 @@ public class ClientService {
     // add Methods
     public Client addClient(Client client) throws MessagingException {
         //Generate a Random 8 character String
-        CodeAccessGenerator codeAccessGenerator= new CodeAccessGenerator();
-        client.setCodeAccess(codeAccessGenerator.getCodeAccess());
+        client.setCodeAccess(CodeAccessGenerator.generate());
 
         //Generate the Expiration Date 4 years from current date
-        Date date = new Date();
-        date.setYear(date.getYear() + 4);
-        client.setDateExpiration(date);
+        client.setDateExpiration(ExpireDateUtil.getExpireDate(4));
 
         //Affect agence if not null
-        Agence agence=null;
-        try {
-            if (client.getAgence().getId() != null) {
-                agence = agenceRepository.findById( client.getAgence().getId()).orElseThrow(null);
-            } else if (client.getAgence().getNom() != null) {
-                agence = agenceRepository.findByNom(client.getAgence().getNom());
-            } else {
-                throw new Exception("Agence not found");
-            }
-        }catch (Exception e){
-            log.error("Agence is null");
-        }
-        client.setAgence(agence);
+        client.setAgence(ClientToAgenceUtil.affectAgence(client,agenceRepository));
 
         //Affect pack if not null
-        Pack pack=null;
-        try {
-            if (client.getAgence().getId() != null) {
-                pack = packRepository.findById( client.getAgence().getId()).orElseThrow(null);
-            } else if (client.getAgence().getNom() != null) {
-                pack = packRepository.findByNom(client.getAgence().getNom());
-            } else {
-                throw new Exception("pack not found");
-            }
-        }catch (Exception e){
-            log.error("pack is null");
-        }
-        client.setPack(pack);
+        client.setPack(ClientToPackUtil.affectPack(client,packRepository));
 
         //Send Mail to Client  off for the moment
         //String Status=emailService.sendSimpleMail(new EmailDetails(client.getEmail(),client.getCodeAccess()));
@@ -140,7 +115,6 @@ public class ClientService {
             log.info("Client or Pack not found");
             throw new RuntimeException("Client or Pack not found");
         }
-
         log.info("adding Client {}", client.getEmail() ," to Pack {}",pack.getNom());
         client.setPack(pack);
     }
