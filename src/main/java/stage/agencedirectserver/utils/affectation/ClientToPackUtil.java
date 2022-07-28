@@ -3,11 +3,12 @@ package stage.agencedirectserver.utils.affectation;
 import lombok.extern.slf4j.Slf4j;
 import stage.agencedirectserver.entities.Client;
 import stage.agencedirectserver.entities.Pack;
+import stage.agencedirectserver.exceptions.notfound.PackNotFoundException;
 import stage.agencedirectserver.repositories.PackRepository;
 
 @Slf4j
 public class ClientToPackUtil {
-    public static Pack affectPack(Client client, PackRepository packRepository) {
+    public static Pack affectPack(Client client, PackRepository packRepository) throws PackNotFoundException {
         Pack pack=null;
         try {
             if (client.getAgence().getId() != null) {
@@ -15,10 +16,10 @@ public class ClientToPackUtil {
             } else if (client.getAgence().getNom() != null) {
                 pack = packRepository.findByNom(client.getAgence().getNom());
             } else {
-                throw new Exception("pack not found");
+                throw new PackNotFoundException();
             }
         }catch (Exception e){
-            log.error("pack is null");
+            throw new PackNotFoundException();
         }
         return pack;
     }

@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import stage.agencedirectserver.entities.Agence;
+import stage.agencedirectserver.exceptions.notfound.AgenceNotFoundException;
 import stage.agencedirectserver.services.AgenceService;
 
 import java.net.URI;
@@ -31,7 +32,7 @@ public class AgenceController {
 
     // update Methods
     @PutMapping("/update/{id}")
-    public Agence updateAgence(@RequestBody Agence agence) { return agenceService.updateAgence(agence); }
+    public Agence updateAgence(@PathVariable("id") Long id,@RequestBody Agence agence) throws AgenceNotFoundException { return agenceService.updateAgence(id,agence); }
 
     // delete Methods
     @DeleteMapping("/delete/{id}")

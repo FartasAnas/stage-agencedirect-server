@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import stage.agencedirectserver.entities.Agent;
 import stage.agencedirectserver.entities.Role;
+import stage.agencedirectserver.exceptions.notfound.AgenceNotFoundException;
 import stage.agencedirectserver.repositories.AgenceRepository;
 import stage.agencedirectserver.repositories.AgentRepository;
 import stage.agencedirectserver.repositories.RoleRepository;
@@ -67,11 +68,11 @@ public class AgentService implements UserDetailsService {
     }
 
     // post Methods
-    public Agent addAgent(Agent agent) {
+    public Agent addAgent(Agent agent) throws AgenceNotFoundException {
         log.info("Saving new user {}",agent.getUsername() ," to database");
         agent.setPassword(passwordEncoder.encode(agent.getPassword()));
-
-        agent.setAgence(AgentToAgence.affectAgence(agent,agenceRepository));
+        if(agent.getAgence()!=null)
+            agent.setAgence(AgentToAgence.affectAgence(agent,agenceRepository));
         return agentRepository.save(agent);
     }
 

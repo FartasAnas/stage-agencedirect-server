@@ -15,7 +15,9 @@ import java.util.Date;
 
 @Entity @Data @Table(name = "client")
 @NoArgsConstructor @AllArgsConstructor
-public class Client {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "client_type", discriminatorType = DiscriminatorType.STRING)
+public abstract class Client {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

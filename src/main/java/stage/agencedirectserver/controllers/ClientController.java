@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import stage.agencedirectserver.entities.Client;
+import stage.agencedirectserver.exceptions.notfound.*;
 import stage.agencedirectserver.services.ClientService;
 
 import javax.mail.MessagingException;
@@ -27,26 +28,26 @@ public class ClientController {
 
     // add Methods
     @PostMapping("/add")
-    public ResponseEntity<Client> addClient(@RequestBody Client client) throws MessagingException {
+    public ResponseEntity<Client> addClient(@RequestBody Client client) throws MessagingException, AgenceNotFoundException, PackNotFoundException {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/client/add").toUriString());
         return ResponseEntity.created(uri).body(clientService.addClient(client));
     }
 
     // update Methods
     @PutMapping("/update/{id}")
-    public Client updateClient(@PathVariable("id") long id, @RequestBody Client newClient) { return clientService.updateClient(id, newClient); }
+    public Client updateClient(@PathVariable("id") Long id, @RequestBody Client newClient) throws ClientNotFound { return clientService.updateClient(id, newClient); }
 
     // delete Methods
     @DeleteMapping("/delete/{id}")
-    public void deleteClient(@PathVariable("id") long id) { clientService.deleteClient(id); }
+    public void deleteClient(@PathVariable("id") Long id) { clientService.deleteClient(id); }
 
     // other Methods
     @PostMapping("/myAgence")
-    public void addClientToAgence(@RequestBody AddClientToAgenceForm form){
+    public void addClientToAgence(@RequestBody AddClientToAgenceForm form) throws ClientOrAgentNotFound {
         clientService.addClientToAgence(form.getClientEmail(), form.getAgenceName());
     }
     @PostMapping("/myPack")
-    public void addClientToPack(@RequestBody AddClientToPackForm form){
+    public void addClientToPack(@RequestBody AddClientToPackForm form) throws ClientOrPackNotFound {
         clientService.addClientToPack(form.getClientEmail(), form.getPackName());
     }
     @Data
