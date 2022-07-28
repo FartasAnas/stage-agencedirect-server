@@ -3,6 +3,7 @@ package stage.agencedirectserver.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import stage.agencedirectserver.entities.Role;
+import stage.agencedirectserver.exceptions.NotFoundException;
 import stage.agencedirectserver.repositories.RoleRepository;
 
 import javax.transaction.Transactional;
@@ -23,8 +24,8 @@ public class RoleService {
     }
 
     // update Methods
-    public Role updateRole(Long id , Role role){
-        Role roleToUpdate=roleRepository.findById(id).orElseThrow(null);
+    public Role updateRole(Long id , Role role) throws NotFoundException {
+        Role roleToUpdate=roleRepository.findById(id).orElseThrow(() -> new NotFoundException("Role was not found"));
         roleToUpdate.setName(role.getName()!=null ? role.getName() : roleToUpdate.getName());
         return roleToUpdate;
     }

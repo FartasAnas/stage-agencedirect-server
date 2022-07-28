@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import stage.agencedirectserver.entities.Agence;
 import stage.agencedirectserver.entities.Agent;
+import stage.agencedirectserver.exceptions.NotFoundException;
 import stage.agencedirectserver.services.AgenceService;
 import stage.agencedirectserver.services.AgentService;
 import stage.agencedirectserver.utils.GenerateTokenUtil;
@@ -36,7 +37,7 @@ public class AgentController {
         return ResponseEntity.ok().body(agentService.getAllAgents());
     }
     @GetMapping("/{id}")
-    public Agent getAgent(@PathVariable("id") Long id){
+    public Agent getAgent(@PathVariable("id") Long id) throws NotFoundException {
         return agentService.getAgent(id);
     }
     @GetMapping("/agent/username/{username}")
@@ -53,7 +54,7 @@ public class AgentController {
 
     // put Methods
     @PutMapping("/update/{id}")
-    public Agent updateAgent(@PathVariable("id") Long id, @RequestBody Agent agent){
+    public Agent updateAgent(@PathVariable("id") Long id, @RequestBody Agent agent) throws NotFoundException {
         return agentService.updateAgent(id, agent);
     }
 
@@ -65,7 +66,7 @@ public class AgentController {
 
     // other Methods
     @PostMapping("/addRole")
-    public void addRoleToUser(@RequestBody AddRoleForm form){ agentService.addRoleToAgent(form.getUsername(), form.getRoleName()); }
+    public void addRoleToUser(@RequestBody AddRoleForm form) throws NotFoundException { agentService.addRoleToAgent(form.getUsername(), form.getRoleName()); }
 
     @Data
     public static class AddRoleForm {

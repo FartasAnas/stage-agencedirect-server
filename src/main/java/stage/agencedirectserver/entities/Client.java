@@ -35,7 +35,7 @@ public abstract class Client {
     private String codeAccess;
 
 
-    @Column(nullable = true,unique = true)
+    @Column(nullable = false,unique = true)
     private String CIN;
 
     @Column(nullable = false)

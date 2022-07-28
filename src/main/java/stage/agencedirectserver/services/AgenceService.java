@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import stage.agencedirectserver.entities.Agence;
 import stage.agencedirectserver.entities.Agent;
-import stage.agencedirectserver.exceptions.notfound.AgenceNotFoundException;
+import stage.agencedirectserver.exceptions.NotFoundException;
 import stage.agencedirectserver.repositories.AgenceRepository;
 import stage.agencedirectserver.repositories.AgentRepository;
 
@@ -42,9 +42,9 @@ public class AgenceService {
     }
 
     // update Methods
-    public Agence updateAgence(Long id, Agence agence) throws AgenceNotFoundException {
+    public Agence updateAgence(Long id, Agence agence) throws NotFoundException {
         log.info("Updating agence {}", agence);
-        Agence agenceToUpdate = agenceRepository.findById(id).orElseThrow(AgenceNotFoundException::new);
+        Agence agenceToUpdate = agenceRepository.findById(id).orElseThrow(() -> new NotFoundException("Agence was not found"));
         agenceToUpdate.setNom(agence.getNom()!=null ? agence.getNom() : agenceToUpdate.getNom());
         agenceToUpdate.setVille(agence.getVille()!=null ? agence.getVille() : agenceToUpdate.getVille());
         agenceToUpdate.setAdresse(agence.getAdresse()!=null ? agence.getAdresse() : agenceToUpdate.getAdresse());

@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import stage.agencedirectserver.entities.Role;
+import stage.agencedirectserver.exceptions.NotFoundException;
 import stage.agencedirectserver.services.RoleService;
 
 import java.net.URI;
@@ -27,7 +28,7 @@ public class RoleController {
 
     // update Methods
     @PutMapping("/update/{id}")
-    public Role updateRole(@PathVariable("id") Long id,@RequestBody Role role){ return roleService.updateRole(id,role); }
+    public Role updateRole(@PathVariable("id") Long id,@RequestBody Role role) throws NotFoundException { return roleService.updateRole(id,role); }
 
     // delete Methods
     @DeleteMapping("/delete/{id}")

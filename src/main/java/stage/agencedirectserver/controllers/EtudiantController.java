@@ -7,9 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import stage.agencedirectserver.entities.Client;
 import stage.agencedirectserver.entities.Etudiant;
-import stage.agencedirectserver.exceptions.notfound.AgenceNotFoundException;
-import stage.agencedirectserver.exceptions.notfound.ClientNotFound;
-import stage.agencedirectserver.exceptions.notfound.PackNotFoundException;
+import stage.agencedirectserver.exceptions.NotFoundException;
+import stage.agencedirectserver.exceptions.NullAttributeException;
 import stage.agencedirectserver.services.EtudiantService;
 
 import javax.mail.MessagingException;
@@ -32,14 +31,14 @@ public class EtudiantController {
 
     // add Methods
     @PostMapping("/add")
-    public ResponseEntity<Etudiant> addEtudiant(@RequestBody Etudiant etudiant) throws MessagingException, AgenceNotFoundException, PackNotFoundException {
+    public ResponseEntity<Etudiant> addEtudiant(@RequestBody Etudiant etudiant) throws MessagingException, NotFoundException, NullAttributeException {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/etudiant/add").toUriString());
         return ResponseEntity.created(uri).body(etudiantService.addEtudiant(etudiant));
     }
 
     // update Methods
     @PutMapping("/update/{id}")
-    public Client updateClient(@PathVariable("id") Long id, @RequestBody Etudiant newEtudiant) throws ClientNotFound {
+    public Client updateClient(@PathVariable("id") Long id, @RequestBody Etudiant newEtudiant) throws  NotFoundException {
         return etudiantService.updateEtudiant(id, newEtudiant);
     }
 

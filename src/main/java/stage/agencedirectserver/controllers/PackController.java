@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import stage.agencedirectserver.entities.Pack;
-import stage.agencedirectserver.exceptions.notfound.PackNotFoundException;
+import stage.agencedirectserver.exceptions.NotFoundException;
 import stage.agencedirectserver.services.PackService;
 
 import java.net.URI;
@@ -30,7 +30,7 @@ public class PackController {
 
     // update Methods
     @PutMapping("/update/{id}")
-    public Pack updatePack(@PathVariable("id") Long id,@RequestBody Pack pack) throws PackNotFoundException { return packService.updatePack(id,pack); }
+    public Pack updatePack(@PathVariable("id") Long id,@RequestBody Pack pack) throws NotFoundException { return packService.updatePack(id,pack); }
 
     // delete Methods
     @DeleteMapping("/delete/{id}")

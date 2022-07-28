@@ -6,10 +6,9 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Entity @Data @Table(name = "etudiant")
-@NoArgsConstructor @AllArgsConstructor
-@DiscriminatorValue("Etudiant")
+@Entity @Data @DiscriminatorValue("etudiant")
+@NoArgsConstructor @AllArgsConstructor @Table(name = "etudiant")
 public class Etudiant extends Client {
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String ecole;
 }

@@ -3,7 +3,7 @@ package stage.agencedirectserver.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import stage.agencedirectserver.entities.Pack;
-import stage.agencedirectserver.exceptions.notfound.PackNotFoundException;
+import stage.agencedirectserver.exceptions.NotFoundException;
 import stage.agencedirectserver.repositories.PackRepository;
 
 import javax.transaction.Transactional;
@@ -27,8 +27,8 @@ public class PackService {
     }
 
     // update Methods
-    public Pack updatePack(Long id , Pack pack) throws PackNotFoundException {
-        Pack packToUpdate=packRepository.findById(id).orElseThrow(PackNotFoundException::new);
+    public Pack updatePack(Long id , Pack pack) throws NotFoundException {
+        Pack packToUpdate=packRepository.findById(id).orElseThrow((() -> new NotFoundException("Pack was not found")));
         packToUpdate.setNom(pack.getNom()!=null ? pack.getNom() : packToUpdate.getNom());
         packToUpdate.setTarification(pack.getTarification()!=null ? pack.getTarification() : packToUpdate.getTarification());
         packToUpdate.setPhotoCarte(pack.getPhotoCarte()!=null ? pack.getPhotoCarte() : packToUpdate.getPhotoCarte());

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import stage.agencedirectserver.entities.Agence;
 import stage.agencedirectserver.entities.Client;
 import stage.agencedirectserver.entities.Pack;
-import stage.agencedirectserver.exceptions.notfound.*;
+import stage.agencedirectserver.exceptions.NotFoundException;
 import stage.agencedirectserver.repositories.AgenceRepository;
 import stage.agencedirectserver.repositories.ClientRepository;
 import stage.agencedirectserver.repositories.PackRepository;
@@ -38,7 +38,7 @@ public class ClientService {
     public Client getClientByCIN(String cin) { return clientRepository.findByCIN(cin); }
 
     // add Methods
-    public Client addClient(Client client) throws MessagingException, AgenceNotFoundException, PackNotFoundException {
+    public Client addClient(Client client) throws MessagingException, NotFoundException {
         //Generate a Random 8 character String
         client.setCodeAccess(CodeAccessGenerator.generate());
 
@@ -63,8 +63,8 @@ public class ClientService {
     }
 
     // update Methods
-    public Client updateClient(Long id, Client client) throws ClientNotFound {
-        Client clientToUpdate = clientRepository.findById(id).orElseThrow(ClientNotFound::new);
+    public Client updateClient(Long id, Client client) throws NotFoundException {
+        Client clientToUpdate = clientRepository.findById(id).orElseThrow(() -> new NotFoundException("Client was not found"));
         UpdateClientUtils.update(clientToUpdate,client);
         return clientToUpdate;
     }
@@ -73,20 +73,20 @@ public class ClientService {
     public void deleteClient(Long id) { clientRepository.deleteById(id); }
 
     // other Methods
-    public void addClientToAgence(String email,String agenceName) throws ClientOrAgentNotFound {
+    public void addClientToAgence(String email,String agenceName) throws NotFoundException {
         Client client = clientRepository.findByEmail(email);
         Agence agence = agenceRepository.findByNom(agenceName);
         if(client == null || agence == null) {
-            throw new ClientOrAgentNotFound();
+            throw new NotFoundException("Client was not found");
         }
         client.setAgence(agence);
     }
 
-    public void addClientToPack(String email,String packName) throws ClientOrPackNotFound {
+    public void addClientToPack(String email,String packName) throws NotFoundException {
         Client client = clientRepository.findByEmail(email);
         Pack pack = packRepository.findByNom(packName);
         if(client == null || packName == null) {
-            throw new ClientOrPackNotFound();
+            throw new NotFoundException("Client was not found");
         }
         client.setPack(pack);
     }

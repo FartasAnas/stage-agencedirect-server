@@ -11,7 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import stage.agencedirectserver.entities.Agent;
 import stage.agencedirectserver.entities.Role;
-import stage.agencedirectserver.exceptions.notfound.AgenceNotFoundException;
+import stage.agencedirectserver.exceptions.NotFoundException;
 import stage.agencedirectserver.repositories.AgenceRepository;
 import stage.agencedirectserver.repositories.AgentRepository;
 import stage.agencedirectserver.repositories.RoleRepository;
@@ -52,15 +52,9 @@ public class AgentService implements UserDetailsService {
         log.info("Fetching all agents");
         return agentRepository.findAll();
     }
-    public Agent getAgent(Long id) {
+    public Agent getAgent(Long id) throws NotFoundException {
         log.info("Fetching agent with id", id);
-        try {
-            return agentRepository.findById(id).orElseThrow(null);
-        }
-        catch (Exception e){
-            return null;
-        }
-
+        return agentRepository.findById(id).orElseThrow(() -> new NotFoundException("Agent was not found"));
     }
     public Agent getAgentByUsername(String username) {
         log.info("Fetching agent {}",username);
@@ -68,7 +62,7 @@ public class AgentService implements UserDetailsService {
     }
 
     // post Methods
-    public Agent addAgent(Agent agent) throws AgenceNotFoundException {
+    public Agent addAgent(Agent agent) throws NotFoundException {
         log.info("Saving new user {}",agent.getUsername() ," to database");
         agent.setPassword(passwordEncoder.encode(agent.getPassword()));
         if(agent.getAgence()!=null)
@@ -77,8 +71,8 @@ public class AgentService implements UserDetailsService {
     }
 
     // put Methods
-    public Agent updateAgent(Long id, Agent agent) {
-        Agent agentToUpdate = agentRepository.findById(id).orElseThrow(null);
+    public Agent updateAgent(Long id, Agent agent) throws NotFoundException {
+        Agent agentToUpdate = agentRepository.findById(id).orElseThrow(() -> new NotFoundException("Agent was not found"));
         log.info("updating agent {}",agentToUpdate.getUsername());
 
         agentToUpdate.setPrenom( agent.getPrenom()!=null ? agent.getPrenom() : agentToUpdate.getPrenom() );
@@ -94,16 +88,14 @@ public class AgentService implements UserDetailsService {
     }
 
     // other Methods
-    public void addRoleToAgent(String username, String roleName) {
+    public void addRoleToAgent(String username, String roleName) throws NotFoundException {
         Agent agent = agentRepository.findByUsername(username);
         Role role = roleRepository.findByName(roleName);
         if(agent == null || role == null) {
-            log.info("Agent or role not found");
-            throw new RuntimeException("Agent or role not found");
+            throw new NotFoundException("Agent or role not found");
         }
         else if(agent.getRoles().contains(role)) {
-            log.info("Agent already has this role");
-            throw new RuntimeException("Agent already has this role");
+            throw new NotFoundException("Agent already has this role");
         }
         log.info("adding role {}", role.getName() ," to user {}",agent.getUsername());
         agent.getRoles().add(role);

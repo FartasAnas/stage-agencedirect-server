@@ -4,11 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import stage.agencedirectserver.entities.Client;
 import stage.agencedirectserver.entities.Etudiant;
-import stage.agencedirectserver.exceptions.notfound.AgenceNotFoundException;
-import stage.agencedirectserver.exceptions.notfound.ClientNotFound;
-import stage.agencedirectserver.exceptions.notfound.PackNotFoundException;
+import stage.agencedirectserver.exceptions.NotFoundException;
+import stage.agencedirectserver.exceptions.NullAttributeException;
 import stage.agencedirectserver.repositories.AgenceRepository;
 import stage.agencedirectserver.repositories.EtudiantRepository;
 import stage.agencedirectserver.repositories.PackRepository;
@@ -37,7 +35,12 @@ public class EtudiantService {
     public Etudiant getEtudiantByCIN(String cin) { return etudiantRepository.findByCIN(cin); }
 
     // add Methods
-    public Etudiant addEtudiant(Etudiant etudiant) throws MessagingException, AgenceNotFoundException, PackNotFoundException {
+    public Etudiant addEtudiant(Etudiant etudiant) throws MessagingException, NotFoundException, NullAttributeException {
+        //check if Ecole is null
+        if (etudiant.getEcole() == null) {
+            throw new NullAttributeException("Ecole is null");
+        }
+
         //Generate a Random 8 character String
         etudiant.setCodeAccess(CodeAccessGenerator.generate());
 
@@ -62,8 +65,8 @@ public class EtudiantService {
     }
 
     // update Methods
-    public Etudiant updateEtudiant(Long id, Etudiant etudiant) throws ClientNotFound {
-        Etudiant etudiantToUpdate = etudiantRepository.findById(id).orElseThrow(ClientNotFound::new);
+    public Etudiant updateEtudiant(Long id, Etudiant etudiant) throws NotFoundException {
+        Etudiant etudiantToUpdate = etudiantRepository.findById(id).orElseThrow(() -> new NotFoundException("Etudiant was not found"));
         UpdateClientUtils.update(etudiantToUpdate,etudiant);
         etudiantToUpdate.setEcole(etudiant.getEcole()!=null ? etudiant.getEcole() : etudiantToUpdate.getEcole());
         return etudiantToUpdate;
