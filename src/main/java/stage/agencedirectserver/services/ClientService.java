@@ -2,31 +2,46 @@ package stage.agencedirectserver.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Primary;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import stage.agencedirectserver.entities.Agence;
-import stage.agencedirectserver.entities.Client;
-import stage.agencedirectserver.entities.Pack;
+import stage.agencedirectserver.entities.*;
 import stage.agencedirectserver.exceptions.NotFoundException;
+import stage.agencedirectserver.exceptions.NullAttributeException;
 import stage.agencedirectserver.repositories.AgenceRepository;
 import stage.agencedirectserver.repositories.ClientRepository;
 import stage.agencedirectserver.repositories.PackRepository;
+import stage.agencedirectserver.repositories.RoleRepository;
 import stage.agencedirectserver.utils.CodeAccessGenerator;
+import stage.agencedirectserver.utils.CreateClientUtil;
 import stage.agencedirectserver.utils.ExpireDateUtil;
 import stage.agencedirectserver.utils.UpdateClientUtils;
 import stage.agencedirectserver.utils.affectation.ClientToAgenceUtil;
 import stage.agencedirectserver.utils.affectation.ClientToPackUtil;
+import stage.agencedirectserver.utils.sendmail.EmailDetails;
 import stage.agencedirectserver.utils.sendmail.EmailService;
 
 import javax.mail.MessagingException;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-@Service @Transactional @RequiredArgsConstructor @Slf4j
-public class ClientService {
+@Service @Transactional @RequiredArgsConstructor @Slf4j @Qualifier("ClientService")
+//@Primary @Component("ClientService")
+public class ClientService{
     private final ClientRepository clientRepository;
     private final AgenceRepository agenceRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AgentService agentService;
 
     private final EmailService emailService;
 
@@ -39,26 +54,8 @@ public class ClientService {
 
     // add Methods
     public Client addClient(Client client) throws MessagingException, NotFoundException {
-        //Generate a Random 8 character String
-        client.setCodeAccess(CodeAccessGenerator.generate());
 
-        //Generate the Expiration Date 4 years from current date
-        client.setDateExpiration(ExpireDateUtil.getExpireDate(4));
-
-        //Affect agence if not null
-        if(client.getAgence() != null)
-            client.setAgence(ClientToAgenceUtil.affectAgence(client,agenceRepository));
-
-        //Affect pack if not null
-        if(client.getPack() != null)
-            client.setPack(ClientToPackUtil.affectPack(client,packRepository));
-
-        //Send Mail to Client  off for the moment
-        //String Status=emailService.sendSimpleMail(new EmailDetails(client.getEmail(),client.getCodeAccess()));
-
-        //crypt the password
-        client.setCodeAccess(passwordEncoder.encode(client.getCodeAccess()));
-
+        CreateClientUtil.create(client,roleRepository,agenceRepository,packRepository,passwordEncoder,emailService,agentService);
         return clientRepository.save(client);
     }
 
@@ -90,5 +87,6 @@ public class ClientService {
         }
         client.setPack(pack);
     }
+
 
 }

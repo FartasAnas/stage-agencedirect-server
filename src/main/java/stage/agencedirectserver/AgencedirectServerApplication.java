@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class AgencedirectServerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(AgencedirectServerApplication.class, args);
+			SpringApplication.run(AgencedirectServerApplication.class, args);
 	}
 
 	@Bean
@@ -34,6 +34,7 @@ public class AgencedirectServerApplication {
 				roleService.addRole(new Role(null,"ROLE_DIRECTOR"));
 				roleService.addRole(new Role(null,"ROLE_AGENT"));
 				roleService.addRole(new Role(null,"ROLE_ADMIN"));
+				roleService.addRole(new Role(null,"ROLE_CLIENT"));
 
 				agenceService.addAgence(new Agence(null,"Agence baraka","Casa","Galina Rue 22 N 208","4.51184189","5.949496",new ArrayList<>()));
 

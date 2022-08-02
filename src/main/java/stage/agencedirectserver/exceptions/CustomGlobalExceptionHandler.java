@@ -23,15 +23,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 
         return new ResponseEntity<>(errors, HttpStatus.NOT_FOUND);
     }
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public final ResponseEntity<CustomErrorResponse> duplicatedExceptionsHandler(Exception ex, WebRequest request) {
-        CustomErrorResponse errors = new CustomErrorResponse();
-        errors.setTimestamp(LocalDateTime.now());
-        errors.setError(ex.getMessage());
-        errors.setStatus(HttpStatus.CONFLICT.value());
-        return new ResponseEntity<>(errors, HttpStatus.CONFLICT);
-    }
-    @ExceptionHandler(PropertyValueException.class)
+    @ExceptionHandler({PropertyValueException.class,DataIntegrityViolationException.class})
     public final ResponseEntity<CustomErrorResponse> notNullExceptionsHandler(Exception ex, WebRequest request) {
         CustomErrorResponse errors = new CustomErrorResponse();
         errors.setTimestamp(LocalDateTime.now());

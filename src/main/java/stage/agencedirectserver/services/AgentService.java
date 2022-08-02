@@ -2,12 +2,15 @@ package stage.agencedirectserver.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import stage.agencedirectserver.entities.Agent;
 import stage.agencedirectserver.entities.Role;
@@ -23,28 +26,13 @@ import java.util.Collection;
 import java.util.List;
 
 @Service @Transactional @RequiredArgsConstructor @Slf4j
-public class AgentService implements UserDetailsService {
+//@Primary @Component("AgentService")
+public class AgentService{
     private final AgentRepository agentRepository;
     private final RoleRepository roleRepository;
     private final AgenceRepository agenceRepository;
 
     private final PasswordEncoder passwordEncoder;
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Agent agent = agentRepository.findByUsername(username);
-        if (agent == null) {
-            throw new UsernameNotFoundException("User not found");
-        }
-        log.info("Agent found: {}", agent);
-        Collection<SimpleGrantedAuthority> authorities =new ArrayList<>();
-        agent.getRoles().forEach(role ->
-                authorities.add(new SimpleGrantedAuthority(role.getName()))
-        );
-        return new User(agent.getUsername(), agent.getPassword(), authorities);
-    }
-
-
 
 
     // get Methods

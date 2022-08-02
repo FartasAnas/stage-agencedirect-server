@@ -1,18 +1,30 @@
 package stage.agencedirectserver.controllers;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import stage.agencedirectserver.entities.Agent;
 import stage.agencedirectserver.entities.Client;
 import stage.agencedirectserver.exceptions.NotFoundException;
 import stage.agencedirectserver.services.ClientService;
+import stage.agencedirectserver.utils.ClientGenerateTokenUtil;
+import stage.agencedirectserver.utils.GenerateTokenUtil;
 
 import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RestController @RequiredArgsConstructor @RequestMapping("/api/client") @Slf4j
 public class ClientController {
@@ -59,6 +71,22 @@ public class ClientController {
     public static class AddClientToPackForm {
         private String clientEmail;
             private String packName;
+    }
+
+    @PostMapping("/token/refresh")
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
+        if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            String refreshToken = authorizationHeader.substring("Bearer ".length());
+            Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+            JWTVerifier verifier = JWT.require(algorithm).build();
+            DecodedJWT decodedJWT = verifier.verify(refreshToken);
+            String email = decodedJWT.getSubject();
+            Client client = clientService.getClientByEmail(email);
+            ClientGenerateTokenUtil.generateClientToken(request, response, client, refreshToken,algorithm);
+        }else {
+            throw new RuntimeException("Refresh token is missing");
+        }
     }
 
 

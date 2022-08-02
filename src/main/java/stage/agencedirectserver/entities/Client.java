@@ -1,6 +1,7 @@
 package stage.agencedirectserver.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,6 +12,8 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 
 @Entity @Data @Table(name = "client")
@@ -79,4 +82,7 @@ public abstract class Client {
     @JoinColumn(name = "pack_id")
     @JsonIncludeProperties(value = {"id","nom","tarification"})
     private Pack pack;
+
+    @ManyToMany(fetch = FetchType.EAGER) //@JsonIgnore
+    private Collection<Role> roles=new ArrayList<>();
 }
