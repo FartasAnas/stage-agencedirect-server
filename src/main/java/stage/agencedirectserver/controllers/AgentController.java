@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import stage.agencedirectserver.entities.Agence;
 import stage.agencedirectserver.entities.Agent;
 import stage.agencedirectserver.exceptions.NotFoundException;
 import stage.agencedirectserver.services.AgenceService;
@@ -29,7 +28,6 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RestController @RequiredArgsConstructor @RequestMapping("/api/agent")
 public class AgentController {
     private final AgentService agentService;
-    private final AgenceService agenceService;
 
     // get Methods
     @GetMapping("/all")
@@ -73,7 +71,6 @@ public class AgentController {
         private String username;
         private String roleName;
     }
-
     @PostMapping("/token/refresh")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);

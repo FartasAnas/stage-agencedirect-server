@@ -11,4 +11,5 @@ import javax.persistence.*;
 public class Etudiant extends Client {
     @Column(nullable = true)
     private String ecole;
+
 }

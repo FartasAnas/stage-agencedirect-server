@@ -2,15 +2,7 @@ package stage.agencedirectserver.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Primary;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import stage.agencedirectserver.entities.Agent;
 import stage.agencedirectserver.entities.Role;
@@ -21,8 +13,6 @@ import stage.agencedirectserver.repositories.RoleRepository;
 import stage.agencedirectserver.utils.affectation.AgentToAgence;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Service @Transactional @RequiredArgsConstructor @Slf4j
@@ -52,6 +42,7 @@ public class AgentService{
     // post Methods
     public Agent addAgent(Agent agent) throws NotFoundException {
         log.info("Saving new user {}",agent.getUsername() ," to database");
+        agent.getRoles().add(roleRepository.findByName("ROLE_AGENT"));
         agent.setPassword(passwordEncoder.encode(agent.getPassword()));
         if(agent.getAgence()!=null)
             agent.setAgence(AgentToAgence.affectAgence(agent,agenceRepository));

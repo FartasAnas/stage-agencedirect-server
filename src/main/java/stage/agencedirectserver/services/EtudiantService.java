@@ -5,20 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import stage.agencedirectserver.entities.Etudiant;
-import stage.agencedirectserver.entities.Role;
+import stage.agencedirectserver.exceptions.EmailNotValidException;
 import stage.agencedirectserver.exceptions.NotFoundException;
 import stage.agencedirectserver.exceptions.NullAttributeException;
-import stage.agencedirectserver.repositories.AgenceRepository;
 import stage.agencedirectserver.repositories.EtudiantRepository;
-import stage.agencedirectserver.repositories.PackRepository;
-import stage.agencedirectserver.repositories.RoleRepository;
-import stage.agencedirectserver.utils.CodeAccessGenerator;
-import stage.agencedirectserver.utils.ExpireDateUtil;
 import stage.agencedirectserver.utils.UpdateClientUtils;
-import stage.agencedirectserver.utils.affectation.ClientToAgenceUtil;
-import stage.agencedirectserver.utils.affectation.ClientToPackUtil;
-import stage.agencedirectserver.utils.sendmail.EmailDetails;
-import stage.agencedirectserver.utils.sendmail.EmailService;
 
 import javax.mail.MessagingException;
 import javax.transaction.Transactional;
@@ -35,7 +26,7 @@ public class EtudiantService {
     public Etudiant getEtudiantByCIN(String cin) { return etudiantRepository.findByCIN(cin); }
 
     // add Methods
-    public Etudiant addEtudiant(Etudiant etudiant) throws MessagingException, NotFoundException, NullAttributeException {
+    public Etudiant addEtudiant(Etudiant etudiant) throws MessagingException, NotFoundException, NullAttributeException, EmailNotValidException {
         //check if Ecole is null
         if (etudiant.getEcole() == null) {
             throw new NullAttributeException("Ecole is null");

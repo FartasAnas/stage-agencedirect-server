@@ -2,8 +2,8 @@ package stage.agencedirectserver.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import stage.agencedirectserver.entities.Agent;
 import stage.agencedirectserver.entities.Client;
+import stage.agencedirectserver.exceptions.EmailNotValidException;
 import stage.agencedirectserver.exceptions.NotFoundException;
 import stage.agencedirectserver.repositories.AgenceRepository;
 import stage.agencedirectserver.repositories.PackRepository;
@@ -16,8 +16,16 @@ import stage.agencedirectserver.utils.sendmail.EmailService;
 
 @Slf4j
 public class CreateClientUtil {
-    public static void create(Client client, RoleRepository roleRepository, AgenceRepository agenceRepository, PackRepository packRepository, PasswordEncoder passwordEncoder, EmailService emailService, AgentService agentService) throws NotFoundException {
+    public static void create(Client client, RoleRepository roleRepository, AgenceRepository agenceRepository, PackRepository packRepository, PasswordEncoder passwordEncoder, EmailService emailService, AgentService agentService) throws NotFoundException, EmailNotValidException {
         client.getRoles().add(roleRepository.findByName("ROLE_CLIENT"));
+
+        //Email Validation
+        if(EmailValidationUtil.isValid(client.getEmail())) {
+            log.info("Email is valid");
+        } else {
+            log.info("Email is not valid");
+            throw new EmailNotValidException();
+        }
 
         //Generate a Random 8 character String
         client.setCodeAccess(CodeAccessGenerator.generate());
@@ -40,6 +48,7 @@ public class CreateClientUtil {
 
         //crypt the password
         client.setCodeAccess(passwordEncoder.encode(client.getCodeAccess()));
+
     }
 
 }

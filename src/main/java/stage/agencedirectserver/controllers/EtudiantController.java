@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import stage.agencedirectserver.entities.Client;
 import stage.agencedirectserver.entities.Etudiant;
+import stage.agencedirectserver.exceptions.EmailNotValidException;
 import stage.agencedirectserver.exceptions.NotFoundException;
 import stage.agencedirectserver.exceptions.NullAttributeException;
 import stage.agencedirectserver.services.EtudiantService;
@@ -31,7 +32,7 @@ public class EtudiantController {
 
     // add Methods
     @PostMapping("/add")
-    public ResponseEntity<Etudiant> addEtudiant(@RequestBody Etudiant etudiant) throws MessagingException, NotFoundException, NullAttributeException {
+    public ResponseEntity<Etudiant> addEtudiant(@RequestBody Etudiant etudiant) throws MessagingException, NotFoundException, NullAttributeException, EmailNotValidException {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/etudiant/add").toUriString());
         return ResponseEntity.created(uri).body(etudiantService.addEtudiant(etudiant));
     }

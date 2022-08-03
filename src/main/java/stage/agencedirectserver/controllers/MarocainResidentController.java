@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import stage.agencedirectserver.entities.MarocainResident;
+import stage.agencedirectserver.exceptions.EmailNotValidException;
 import stage.agencedirectserver.exceptions.NotFoundException;
 import stage.agencedirectserver.exceptions.NullAttributeException;
 import stage.agencedirectserver.services.MarocainResidentService;
@@ -30,7 +31,7 @@ public class MarocainResidentController {
 
     // add Methods
     @PostMapping("/add")
-    public ResponseEntity<MarocainResident> addMarocainResident(@RequestBody MarocainResident marocainResident) throws MessagingException, NotFoundException, NullAttributeException {
+    public ResponseEntity<MarocainResident> addMarocainResident(@RequestBody MarocainResident marocainResident) throws MessagingException, NotFoundException, NullAttributeException, EmailNotValidException {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/marocainresident/add").toUriString());
         return ResponseEntity.created(uri).body(marocainResidentService.addMarocainResident(marocainResident));
     }

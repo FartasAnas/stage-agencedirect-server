@@ -22,8 +22,8 @@ public class Agent {
     @Column(nullable = false) @Size(max = 20)
     private String nom;
 
-    @Column(nullable = false,unique = true) @Size(max = 20)
-        private String username;
+    @Column(nullable = false,unique = true) @Size(max = 10)
+    private String username;
 
     @Column(nullable = false)
     private String password;

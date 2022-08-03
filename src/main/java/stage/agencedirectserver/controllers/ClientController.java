@@ -10,12 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import stage.agencedirectserver.entities.Agent;
 import stage.agencedirectserver.entities.Client;
+import stage.agencedirectserver.exceptions.EmailNotValidException;
 import stage.agencedirectserver.exceptions.NotFoundException;
 import stage.agencedirectserver.services.ClientService;
 import stage.agencedirectserver.utils.ClientGenerateTokenUtil;
-import stage.agencedirectserver.utils.GenerateTokenUtil;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
@@ -40,7 +39,7 @@ public class ClientController {
 
     // add Methods
     @PostMapping("/add")
-    public ResponseEntity<Client> addClient(@RequestBody Client client) throws MessagingException, NotFoundException {
+    public ResponseEntity<Client> addClient(@RequestBody Client client) throws MessagingException, NotFoundException, EmailNotValidException {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/client/add").toUriString());
         return ResponseEntity.created(uri).body(clientService.addClient(client));
     }
@@ -76,6 +75,7 @@ public class ClientController {
     @PostMapping("/token/refresh")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
+        log.info("refreshtoken: {}", request.getHeader(AUTHORIZATION));
         if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String refreshToken = authorizationHeader.substring("Bearer ".length());
             Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
