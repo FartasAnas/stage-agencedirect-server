@@ -1,5 +1,6 @@
 package stage.agencedirectserver.exceptions;
 
+import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.PropertyValueException;
 import org.hibernate.exception.ConstraintViolationException;
@@ -60,9 +61,22 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         errors.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
         return new ResponseEntity<>(errors, HttpStatus.NOT_ACCEPTABLE);
     }
+    @ExceptionHandler(InvalidDefinitionException.class)
+    public final ResponseEntity<CustomErrorResponse> InvalidExceptionsHandler(Exception ex, WebRequest request) {
+        CustomErrorResponse errors = new CustomErrorResponse();
+        errors.setTimestamp(LocalDateTime.now());
+        errors.setError(HttpStatus.METHOD_NOT_ALLOWED.name().replace("_"," "));
+        errors.setMessage(ex.getMessage());
+        errors.setPath(request.getDescription(false).replace("uri=",""));
+        errors.setStatus(HttpStatus.METHOD_NOT_ALLOWED.value());
+        return new ResponseEntity<>(errors, HttpStatus.METHOD_NOT_ALLOWED);
+    }
 
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<CustomErrorResponse> AllExceptionsHandler(Exception ex, WebRequest request) {
+        if(!ex.getMessage().replace("InvalidDefinitionException","").equals(ex.getMessage())) {
+            return InvalidExceptionsHandler(ex,request);
+        }
         CustomErrorResponse errors = new CustomErrorResponse();
         errors.setTimestamp(LocalDateTime.now());
         errors.setError(HttpStatus.INTERNAL_SERVER_ERROR.name().replace("_"," "));

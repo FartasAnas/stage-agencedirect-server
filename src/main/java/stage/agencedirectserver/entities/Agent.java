@@ -1,9 +1,11 @@
 package stage.agencedirectserver.entities;
 
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import stage.agencedirectserver.utils.ToLowerCaseDeserializer;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -23,6 +25,7 @@ public class Agent {
     private String nom;
 
     @Column(nullable = false,unique = true) @Size(max = 10)
+    @JsonDeserialize(converter = ToLowerCaseDeserializer.class)
     private String username;
 
     @Column(nullable = false)

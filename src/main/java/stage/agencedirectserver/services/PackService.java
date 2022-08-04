@@ -17,9 +17,7 @@ public class PackService {
     public List<Pack> getAllPacks(){
         return packRepository.findAll();
     }
-    public Pack getPackByTitre(String titre){
-        return packRepository.findByNom(titre);
-    }
+    public Pack getPackByTitre(String titre){return packRepository.findByNom(titre.toLowerCase());}
 
     // post Methods
     public Pack addPack(Pack pack){

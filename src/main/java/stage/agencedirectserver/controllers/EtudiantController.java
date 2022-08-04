@@ -1,24 +1,22 @@
 package stage.agencedirectserver.controllers;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import stage.agencedirectserver.entities.Client;
 import stage.agencedirectserver.entities.Etudiant;
 import stage.agencedirectserver.exceptions.EmailNotValidException;
 import stage.agencedirectserver.exceptions.NotFoundException;
 import stage.agencedirectserver.exceptions.NullAttributeException;
 import stage.agencedirectserver.services.EtudiantService;
+import stage.agencedirectserver.utils.UriUtil;
 
 import javax.mail.MessagingException;
-import java.net.URI;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/etudiant") @Slf4j
+@RequestMapping("/api/etudiant")
 public class EtudiantController {
     private final EtudiantService etudiantService;
 
@@ -33,15 +31,12 @@ public class EtudiantController {
     // add Methods
     @PostMapping("/add")
     public ResponseEntity<Etudiant> addEtudiant(@RequestBody Etudiant etudiant) throws MessagingException, NotFoundException, NullAttributeException, EmailNotValidException {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/etudiant/add").toUriString());
-        return ResponseEntity.created(uri).body(etudiantService.addEtudiant(etudiant));
+        return ResponseEntity.created(UriUtil.Uri("/api/etudiant/add")).body(etudiantService.addEtudiant(etudiant));
     }
 
     // update Methods
     @PutMapping("/update/{id}")
-    public Client updateClient(@PathVariable("id") Long id, @RequestBody Etudiant newEtudiant) throws  NotFoundException {
-        return etudiantService.updateEtudiant(id, newEtudiant);
-    }
+    public Client updateClient(@PathVariable("id") Long id, @RequestBody Etudiant newEtudiant) throws  NotFoundException { return etudiantService.updateEtudiant(id, newEtudiant); }
 
     // delete Methods
     @DeleteMapping("/delete/{id}")

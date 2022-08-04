@@ -3,12 +3,11 @@ package stage.agencedirectserver.controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import stage.agencedirectserver.entities.Role;
 import stage.agencedirectserver.exceptions.NotFoundException;
 import stage.agencedirectserver.services.RoleService;
+import stage.agencedirectserver.utils.UriUtil;
 
-import java.net.URI;
 import java.util.List;
 
 @RestController @RequiredArgsConstructor @RequestMapping("/api/role")
@@ -21,10 +20,7 @@ public class RoleController {
 
     // post Methods
     @PostMapping("/add")
-    public ResponseEntity<Role> addRole(@RequestBody Role role){
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/role/add").toUriString());
-        return ResponseEntity.created(uri).body(roleService.addRole(role));
-    }
+    public ResponseEntity<Role> addRole(@RequestBody Role role){ return ResponseEntity.created(UriUtil.Uri("/api/role/add")).body(roleService.addRole(role)); }
 
     // update Methods
     @PutMapping("/update/{id}")

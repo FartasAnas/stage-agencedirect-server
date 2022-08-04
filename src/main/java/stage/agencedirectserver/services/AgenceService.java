@@ -2,6 +2,7 @@ package stage.agencedirectserver.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import stage.agencedirectserver.entities.Agence;
 import stage.agencedirectserver.entities.Agent;
@@ -32,7 +33,7 @@ public class AgenceService {
     }
     public Agence getAgenceByNom(String nom){
         log.info("Fetching agence with nom {}", nom);
-        return agenceRepository.findByNom(nom);
+        return agenceRepository.findByNom(nom.toLowerCase());
     }
 
     // add Methods
@@ -60,16 +61,16 @@ public class AgenceService {
     }
 
     // other Methods
-    public void addAgentToAgence(String username,String agenceName){
-        Agent agent = agentRepository.findByUsername(username);
-        Agence agence = agenceRepository.findByNom(agenceName);
+    public void addAgentToAgence(String username,String agenceName) throws NotFoundException {
+        Agent agent = agentRepository.findByUsername(username.toLowerCase());
+        Agence agence = agenceRepository.findByNom(agenceName.toLowerCase());
         if(agent == null || agence == null) {
             log.info("Agent or Agence not found");
-            throw new RuntimeException("Agent or Agence not found");
+            throw new NotFoundException("Agent or Agence not found");
         }
         else if(agence.getAgents().contains(agent)) {
             log.info("Agence already has this Agent");
-            throw new RuntimeException("Agence already has this Agent");
+            throw new DataIntegrityViolationException("Agence already has this Agent");
         }
 
         log.info("adding Agent {}", agent.getUsername() ," to Agence {}",agence.getNom());

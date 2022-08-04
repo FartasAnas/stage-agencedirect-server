@@ -22,8 +22,8 @@ public class EtudiantService {
 
     // get Methods
     public List<Etudiant> getAllEtudiants() { return etudiantRepository.findAll(); }
-    public Etudiant getEtudiantByEmail(String email) { return etudiantRepository.findByEmail(email); }
-    public Etudiant getEtudiantByCIN(String cin) { return etudiantRepository.findByCIN(cin); }
+    public Etudiant getEtudiantByEmail(String email) { return etudiantRepository.findByEmail(email.toLowerCase()); }
+    public Etudiant getEtudiantByCIN(String cin) { return etudiantRepository.findByCIN(cin.toLowerCase()); }
 
     // add Methods
     public Etudiant addEtudiant(Etudiant etudiant) throws MessagingException, NotFoundException, NullAttributeException, EmailNotValidException {
@@ -31,8 +31,7 @@ public class EtudiantService {
         if (etudiant.getEcole() == null) {
             throw new NullAttributeException("Ecole is null");
         }
-        etudiant=(Etudiant) clientService.addClient(etudiant);
-        return etudiantRepository.save(etudiant);
+        return etudiantRepository.save((Etudiant) clientService.addClient(etudiant));
     }
 
     // update Methods

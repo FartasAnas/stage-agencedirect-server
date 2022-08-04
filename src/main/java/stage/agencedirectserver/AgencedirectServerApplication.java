@@ -36,7 +36,7 @@ public class AgencedirectServerApplication {
 				roleService.addRole(new Role(null,"ROLE_ADMIN"));
 				roleService.addRole(new Role(null,"ROLE_CLIENT"));
 
-				agenceService.addAgence(new Agence(null,"Agence baraka","Casa","Galina Rue 22 N 208","4.51184189","5.949496",new ArrayList<>()));
+				agenceService.addAgence(new Agence(null,"agence baraka","Casa","Galina Rue 22 N 208","4.51184189","5.949496",new ArrayList<>()));
 
 				agentService.addAgent(new Agent(null,"fartas","anas","fartasanas","1234",null,new ArrayList<>()));
 

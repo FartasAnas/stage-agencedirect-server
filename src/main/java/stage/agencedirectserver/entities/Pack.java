@@ -1,8 +1,10 @@
 package stage.agencedirectserver.entities;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import stage.agencedirectserver.utils.ToLowerCaseDeserializer;
 
 import javax.persistence.*;
 
@@ -13,6 +15,7 @@ public class Pack {
     private Long id;
 
     @Column(nullable = false,unique = true)
+    @JsonDeserialize(converter = ToLowerCaseDeserializer.class)
     private String nom;
 
     @Column(nullable = false)

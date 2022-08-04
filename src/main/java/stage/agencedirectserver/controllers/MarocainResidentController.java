@@ -1,23 +1,21 @@
 package stage.agencedirectserver.controllers;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import stage.agencedirectserver.entities.MarocainResident;
 import stage.agencedirectserver.exceptions.EmailNotValidException;
 import stage.agencedirectserver.exceptions.NotFoundException;
 import stage.agencedirectserver.exceptions.NullAttributeException;
 import stage.agencedirectserver.services.MarocainResidentService;
+import stage.agencedirectserver.utils.UriUtil;
 
 import javax.mail.MessagingException;
-import java.net.URI;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/marocainresident") @Slf4j
+@RequestMapping("/api/marocainresident")
 public class MarocainResidentController {
     private final MarocainResidentService marocainResidentService;
 
@@ -32,8 +30,7 @@ public class MarocainResidentController {
     // add Methods
     @PostMapping("/add")
     public ResponseEntity<MarocainResident> addMarocainResident(@RequestBody MarocainResident marocainResident) throws MessagingException, NotFoundException, NullAttributeException, EmailNotValidException {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/marocainresident/add").toUriString());
-        return ResponseEntity.created(uri).body(marocainResidentService.addMarocainResident(marocainResident));
+        return ResponseEntity.created(UriUtil.Uri("/api/marocainresident/add")).body(marocainResidentService.addMarocainResident(marocainResident));
     }
 
     // update Methods

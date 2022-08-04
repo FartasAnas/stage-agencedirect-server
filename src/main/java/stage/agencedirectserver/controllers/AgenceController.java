@@ -2,18 +2,16 @@ package stage.agencedirectserver.controllers;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import stage.agencedirectserver.entities.Agence;
 import stage.agencedirectserver.exceptions.NotFoundException;
 import stage.agencedirectserver.services.AgenceService;
+import stage.agencedirectserver.utils.UriUtil;
 
-import java.net.URI;
 import java.util.List;
 
-@RestController @RequiredArgsConstructor @RequestMapping("/api/agence") @Slf4j
+@RestController @RequiredArgsConstructor @RequestMapping("/api/agence")
 public class AgenceController {
     public final AgenceService agenceService;
 
@@ -25,10 +23,7 @@ public class AgenceController {
 
     // add Methods
     @PostMapping("/add")
-    public ResponseEntity<Agence> addAgence(@RequestBody Agence agence) {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/agence/add").toUriString());
-        return ResponseEntity.created(uri).body(agenceService.addAgence(agence));
-    }
+    public ResponseEntity<Agence> addAgence(@RequestBody Agence agence) { return ResponseEntity.created(UriUtil.Uri("/api/agence/add")).body(agenceService.addAgence(agence)); }
 
     // update Methods
     @PutMapping("/update/{id}")
@@ -40,9 +35,7 @@ public class AgenceController {
 
     // other Methods
     @PostMapping("/addAgent")
-    public void addAgentToAgence(@RequestBody AddAgentForm form){
-        agenceService.addAgentToAgence(form.getUsername(), form.getAgenceName());
-    }
+    public void addAgentToAgence(@RequestBody AddAgentForm form) throws NotFoundException { agenceService.addAgentToAgence(form.getUsername(), form.getAgenceName()); }
     @Data
     public static class AddAgentForm {
         private String username;

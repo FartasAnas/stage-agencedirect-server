@@ -22,8 +22,8 @@ public class MarocainResidentService {
 
     // get Methods
     public List<MarocainResident> getAllMarocainResidents() { return marocainResidentRepository.findAll(); }
-    public MarocainResident getMarocainResidentByEmail(String email) { return marocainResidentRepository.findByEmail(email); }
-    public MarocainResident getMarocainResidentByCIN(String cin) { return marocainResidentRepository.findByCIN(cin); }
+    public MarocainResident getMarocainResidentByEmail(String email) { return marocainResidentRepository.findByEmail(email.toLowerCase()); }
+    public MarocainResident getMarocainResidentByCIN(String cin) { return marocainResidentRepository.findByCIN(cin.toLowerCase()); }
 
     // add Methods
     public MarocainResident addMarocainResident(MarocainResident marocainResident) throws MessagingException, NotFoundException, NullAttributeException, EmailNotValidException {
@@ -31,8 +31,7 @@ public class MarocainResidentService {
         if (marocainResident.getTravail() == null) {
             throw new NullAttributeException("travail is null");
         }
-        marocainResident=(MarocainResident) clientService.addClient(marocainResident);
-        return marocainResidentRepository.save(marocainResident);
+        return marocainResidentRepository.save((MarocainResident) clientService.addClient(marocainResident));
     }
 
     // update Methods
