@@ -35,6 +35,9 @@ public class AgenceService {
         log.info("Fetching agence with nom {}", nom);
         return agenceRepository.findByNom(nom.toLowerCase());
     }
+    public Long getCountAgence(){
+        return agenceRepository.count();
+    }
 
     // add Methods
     public Agence addAgence(Agence agence) {

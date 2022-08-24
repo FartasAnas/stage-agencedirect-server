@@ -12,4 +12,5 @@ public class Etudiant extends Client {
     @Column(nullable = true)
     private String ecole;
 
+    private String type="Etudiant";
 }

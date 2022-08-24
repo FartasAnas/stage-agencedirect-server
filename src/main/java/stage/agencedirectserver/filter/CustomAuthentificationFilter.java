@@ -17,6 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,7 +48,7 @@ public class CustomAuthentificationFilter extends UsernamePasswordAuthentication
         Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
         String accessToken = JWT.create()
                 .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 3 * 24 * 60 * 60 * 1000))//expire in 3 days
+                .withExpiresAt(new Date(System.currentTimeMillis() + 5000))
                 .withIssuer(request.getRequestURL().toString())
                 .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .sign(algorithm);
@@ -61,9 +62,10 @@ public class CustomAuthentificationFilter extends UsernamePasswordAuthentication
 
         /*response.addHeader("Access-Token", accessToken);
         response.addHeader("Refresh-Token", refreshToken);*/
-        Map<String,String> tokens =new HashMap<>();
-        tokens.put("Access-Token",accessToken);
-        tokens.put("Refresh-Token",refreshToken);
+        Map<String,Object> tokens =new HashMap<>();
+        tokens.put("accessToken",accessToken);
+        tokens.put("refreshToken",refreshToken);
+        tokens.put("roles",user.getAuthorities());
         response.setContentType(APPLICATION_JSON_VALUE);
         new ObjectMapper().writeValue(response.getOutputStream(),tokens);
     }

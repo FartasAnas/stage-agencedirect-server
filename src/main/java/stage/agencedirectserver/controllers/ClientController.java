@@ -27,6 +27,10 @@ public class ClientController {
     public Client getClientByEmail(@PathVariable("email") String email) { return clientService.getClientByEmail(email); }
     @GetMapping("/cin/{cin}")
     public Client getClientByCIN(@PathVariable("cin") String cin) { return clientService.getClientByCIN(cin); }
+    @GetMapping("/count")
+    public Long getClientCount(){ return  clientService.getClientCount(); }
+    @GetMapping("/demande")
+    public Long getDemandeCount(){ return  clientService.getDemandeCount(); }
 
     // add Methods
     @PostMapping("/add")

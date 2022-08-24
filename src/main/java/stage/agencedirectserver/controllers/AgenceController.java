@@ -20,6 +20,8 @@ public class AgenceController {
     public List<Agence> getAllAgences() { return agenceService.getAllAgences();  }
     @GetMapping("/ville/{ville}")
     public List<Agence> getAgencesByVille(@PathVariable("ville") String ville) { return agenceService.getAgencesByVille(ville); }
+    @GetMapping("/count")
+    public Long getCountAgence(){return  agenceService.getCountAgence();}
 
     // add Methods
     @PostMapping("/add")

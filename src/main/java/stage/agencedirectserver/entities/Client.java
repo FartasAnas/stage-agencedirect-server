@@ -52,18 +52,16 @@ public abstract class Client {
     private Date dateNaissance;
 
     @Temporal(TemporalType.TIMESTAMP) @CreationTimestamp
-    @Column(nullable = false) @JsonFormat(pattern="dd/MM/yyyy HH:mm")
+    @Column(nullable = false) @JsonFormat(pattern="dd/MM/yyyy")
     private Date dateInscription;
 
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(nullable = false) @JsonFormat(pattern="dd/MM/yyyy HH:mm")
+    @Column(nullable = false) @JsonFormat(pattern="dd/MM/yyyy")
     private Date dateExpiration;
 
     @Column(nullable = false)
     private String adresse;
-
-    private String profession;
 
     @Column(nullable = false)
     private long codePostale;
@@ -87,4 +85,6 @@ public abstract class Client {
 
     @ManyToMany(fetch = FetchType.EAGER) @JsonIgnore
     private Collection<Role> roles=new ArrayList<>();
+
+    private boolean isActive=false;
 }

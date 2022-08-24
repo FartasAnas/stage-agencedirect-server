@@ -48,6 +48,17 @@ public class ClientService{
     public List<Client> getAllClients() { return clientRepository.findAll();  }
     public Client getClientByEmail(String email) { return clientRepository.findByEmail(email); }
     public Client getClientByCIN(String cin) { return clientRepository.findByCIN(cin); }
+    public Long getClientCount(){ return clientRepository.count(); }
+    public Long getDemandeCount(){
+        long count = 0;
+        for (Client client : clientRepository.findAll()) {
+            log.info("Client {}",client.getEmail());
+            log.info("isActive {}",client.isActive());
+            if(client.isActive() == false)
+                count++;
+            }
+        return count;
+    }
 
     // add Methods
     public Client addClient(Client client) throws MessagingException, NotFoundException, EmailNotValidException {

@@ -28,8 +28,8 @@ public class MarocainResidentService {
     // add Methods
     public MarocainResident addMarocainResident(MarocainResident marocainResident) throws MessagingException, NotFoundException, NullAttributeException, EmailNotValidException {
         //check if travail is null
-        if (marocainResident.getTravail() == null) {
-            throw new NullAttributeException("travail is null");
+        if (marocainResident.getProfession() == null) {
+            throw new NullAttributeException("Profession is null");
         }
         return marocainResidentRepository.save((MarocainResident) clientService.addClient(marocainResident));
     }

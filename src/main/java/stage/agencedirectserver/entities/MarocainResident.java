@@ -14,4 +14,8 @@ import javax.persistence.Table;
 public class MarocainResident extends Client{
     @Column(nullable = true)
     private String travail;
+
+    private String profession;
+
+    private String type="Particulier résidant au Maroc";
 }

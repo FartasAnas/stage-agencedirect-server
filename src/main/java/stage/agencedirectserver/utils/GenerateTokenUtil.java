@@ -4,15 +4,15 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import stage.agencedirectserver.entities.Agent;
 import stage.agencedirectserver.entities.Role;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -22,6 +22,10 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class GenerateTokenUtil {
     public static void generateToken(HttpServletRequest request, HttpServletResponse response,Agent agent,String refreshToken,Algorithm algorithm) throws IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        for (Role role : agent.getRoles()) {
+            authorities.add(new SimpleGrantedAuthority(role.getName()));
+        }
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             try {
                 String accessToken = JWT.create()
@@ -31,9 +35,10 @@ public class GenerateTokenUtil {
                         .withClaim("roles", agent.getRoles().stream().map(Role::getName).collect(Collectors.toList()))
                         .sign(algorithm);
 
-                Map<String, String> tokens = new HashMap<>();
-                tokens.put("Access-Token", accessToken);
-                tokens.put("Refresh-Token", refreshToken);
+                Map<String,Object> tokens =new HashMap<>();
+                tokens.put("accessToken",accessToken);
+                tokens.put("refreshToken",refreshToken);
+                tokens.put("roles",authorities);
                 response.setContentType(APPLICATION_JSON_VALUE);
                 new ObjectMapper().writeValue(response.getOutputStream(), tokens);
             } catch (Exception e) {

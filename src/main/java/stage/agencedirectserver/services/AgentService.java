@@ -50,6 +50,9 @@ public class AgentService{
         log.info("Fetching agent {}",username);
         return agentRepository.findByUsername(username.toLowerCase());
     }
+    public Long getAgentCount(){
+        return agentRepository.count();
+    }
 
     // post Methods
     public Agent addAgent(Agent agent) throws NotFoundException {
@@ -80,7 +83,8 @@ public class AgentService{
     // other Methods
     public void addRoleToAgent(String username, String roleName) throws NotFoundException {
         Agent agent = agentRepository.findByUsername(username.toLowerCase());
-        Role role = roleRepository.findByName(roleName.toLowerCase());
+        Role role = roleRepository.findByName(roleName);
+
         if(agent == null || role == null) {
             throw new NotFoundException("Agent or role not found");
         }

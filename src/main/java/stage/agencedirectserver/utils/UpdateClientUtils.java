@@ -17,6 +17,6 @@ public class UpdateClientUtils {
         clientToUpdate.setCinVersoURL(client.getCinVersoURL()!=null ? client.getCinVersoURL() : clientToUpdate.getCinVersoURL());
         clientToUpdate.setSelfieURL(client.getSelfieURL()!=null ? client.getSelfieURL() : clientToUpdate.getSelfieURL());
         clientToUpdate.setAdresse(client.getAdresse()!=null ? client.getAdresse() : clientToUpdate.getAdresse());
-        clientToUpdate.setProfession(client.getProfession()!=null ? client.getProfession() : clientToUpdate.getProfession());
+        clientToUpdate.setActive(client.isActive()!=false ? client.isActive() : clientToUpdate.isActive());
     }
 }

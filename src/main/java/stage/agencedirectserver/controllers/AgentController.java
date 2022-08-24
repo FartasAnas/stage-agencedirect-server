@@ -29,13 +29,17 @@ public class AgentController {
     public Agent getAgent(@PathVariable("id") Long id) throws NotFoundException {
         return agentService.getAgent(id);
     }
-    @GetMapping("/agent/username/{username}")
+    @GetMapping("   /username/{username}")
     public Agent getAgentByUsername(@PathVariable("username") String username){
         return agentService.getAgentByUsername(username);
     }
+    @GetMapping("/count")
+    public Long getAgentCount(){
+        return agentService.getAgentCount();
+    }
 
     // post Methods
-    @PostMapping("/register")
+    @PostMapping("/add")
     public ResponseEntity<Agent> addAgent(@RequestBody Agent agent) throws Exception {
         return ResponseEntity.created(UriUtil.Uri("/api/agent/add")).body(agentService.addAgent(agent));
     }
