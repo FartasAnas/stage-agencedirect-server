@@ -18,8 +18,10 @@ import stage.agencedirectserver.repositories.ClientRepository;
 import stage.agencedirectserver.repositories.PackRepository;
 import stage.agencedirectserver.repositories.RoleRepository;
 import stage.agencedirectserver.utils.ClientGenerateTokenUtil;
+import stage.agencedirectserver.utils.CodeAccessGenerator;
 import stage.agencedirectserver.utils.CreateClientUtil;
 import stage.agencedirectserver.utils.UpdateClientUtils;
+import stage.agencedirectserver.utils.sendmail.EmailDetails;
 import stage.agencedirectserver.utils.sendmail.EmailService;
 
 import javax.mail.MessagingException;
@@ -27,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -49,6 +52,16 @@ public class ClientService{
     public Client getClientByEmail(String email) { return clientRepository.findByEmail(email); }
     public Client getClientByCIN(String cin) { return clientRepository.findByCIN(cin); }
     public Long getClientCount(){ return clientRepository.count(); }
+    public List<Client> getAllInactiveClients(){
+        List<Client> inactiveClients=new ArrayList<Client>();
+        for (Client client : clientRepository.findAll())
+        {
+            if(client.isActive()==false){
+                inactiveClients.add(client);
+            }
+        }
+        return inactiveClients;
+    }
     public Long getDemandeCount(){
         long count = 0;
         for (Client client : clientRepository.findAll()) {
@@ -62,6 +75,7 @@ public class ClientService{
 
     // add Methods
     public Client addClient(Client client) throws MessagingException, NotFoundException, EmailNotValidException {
+        log.info("pack :{}",client.getPack());
         CreateClientUtil.create(client,roleRepository,agenceRepository,packRepository,passwordEncoder,emailService,agentService);
         return clientRepository.save(client);
     }
@@ -77,6 +91,21 @@ public class ClientService{
     public void deleteClient(Long id) { clientRepository.deleteById(id); }
 
     // other Methods
+    public void newAccessCode(String email,boolean sendEmail){
+        //find Client
+        Client client=clientRepository.findByEmail(email.toLowerCase());
+
+        // Generate new AccessCode
+        client.setCodeAccess(CodeAccessGenerator.generate());
+        log.info("New CodeAccess: {}", client.getCodeAccess());
+
+        //Send Mail to Client  off for the moment
+        if(sendEmail) {
+            String Status=emailService.sendSimpleMail(new EmailDetails(client.getEmail(),client.getCodeAccess()));
+        }
+        //crypt the password
+        client.setCodeAccess(passwordEncoder.encode(client.getCodeAccess()));
+    }
     public void addClientToAgence(String email,String agenceName) throws NotFoundException {
         Client client = clientRepository.findByEmail(email.toLowerCase());
         Agence agence = agenceRepository.findByNom(agenceName.toLowerCase());

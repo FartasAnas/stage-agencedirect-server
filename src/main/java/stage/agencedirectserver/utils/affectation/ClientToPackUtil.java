@@ -11,10 +11,11 @@ public class ClientToPackUtil {
     public static Pack affectPack(Client client, PackRepository packRepository) throws NotFoundException {
         Pack pack=null;
         try {
-            if (client.getAgence().getId() != null) {
-                pack = packRepository.findById( client.getAgence().getId()).orElseThrow(null);
-            } else if (client.getAgence().getNom() != null) {
-                pack = packRepository.findByNom(client.getAgence().getNom());
+            if (client.getPack().getId() != null) {
+                log.info("pack id :{}",client.getPack().getId());
+                pack = packRepository.findById( client.getPack().getId()).orElseThrow(null);
+            } else if (client.getPack().getNom() != null) {
+                pack = packRepository.findByNom(client.getPack().getNom());
             } else {
                 throw new NotFoundException("Pack was not found");
             }

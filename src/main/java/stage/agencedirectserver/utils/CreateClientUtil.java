@@ -35,6 +35,7 @@ public class CreateClientUtil {
         //Generate the Expiration Date 4 years from current date
         client.setDateExpiration(ExpireDateUtil.getExpireDate(4));
 
+
         //Affect agence if not null
         if(client.getAgence() != null)
             client.setAgence(ClientToAgenceUtil.affectAgence(client,agenceRepository));
@@ -42,6 +43,10 @@ public class CreateClientUtil {
         //Affect pack if not null
         if(client.getPack() != null)
             client.setPack(ClientToPackUtil.affectPack(client,packRepository));
+
+        //RIB
+        client.setRIB("005"+client.getAgence().getCodeAgence()+client.getAccountNumber()+client.getCleRIB());
+
 
         //Send Mail to Client  off for the moment
         //String Status=emailService.sendSimpleMail(new EmailDetails(client.getEmail(),client.getCodeAccess()));

@@ -56,11 +56,9 @@ public class AgentService{
 
     // post Methods
     public Agent addAgent(Agent agent) throws NotFoundException {
-        log.info("Saving new user :{}",agent.getUsername());
-        agent.getRoles().add(roleRepository.findByName("ROLE_AGENT"));
+        log.info("Saving new user :{} password:{}",agent.getUsername(),agent.getPassword());
         agent.setPassword(passwordEncoder.encode(agent.getPassword()));
-        if(agent.getAgence()!=null)
-            agent.setAgence(AgentToAgence.affectAgence(agent,agenceRepository));
+        agent.setAgence((agenceRepository.findByNom("agence direct")));
         return agentRepository.save(agent);
     }
 

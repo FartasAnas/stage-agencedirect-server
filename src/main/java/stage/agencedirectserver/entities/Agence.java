@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import stage.agencedirectserver.utils.ToLowerCaseDeserializer;
 
 import javax.persistence.*;
@@ -23,6 +24,9 @@ public class Agence {
     @JsonDeserialize(converter = ToLowerCaseDeserializer.class)
     private String nom;
 
+    @Column(nullable = false,unique = true) @Size(max = 20)
+    private String codeAgence= RandomStringUtils.random(3, "0123456789");
+
     @Column(nullable = false) @Size(max = 20)
     private String ville;
 
@@ -30,10 +34,10 @@ public class Agence {
     private String  adresse;
 
     @Column(nullable = false)
-    private String x;
+    private String x="0"    ;
 
     @Column(nullable = false)
-    private String y;
+    private String y="0";
 
     @OneToMany(mappedBy = "agence",fetch = FetchType.LAZY,cascade=CascadeType.ALL)
     @JsonIncludeProperties(value = {"id","prenom","nom","username"})
